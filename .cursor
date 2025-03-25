@@ -1,0 +1,65 @@
+{
+  "aiContext": {
+    "enabled": true,
+    "contextPath": "__AI_CONTEXT__",
+    "includePaths": [
+      "__AI_CONTEXT__/AI_REQUIREMENTS.md",
+      "__AI_CONTEXT__/**/*.md",
+      "__AI_CONTEXT__/**/*.json",
+      "__AI_CONTEXT__/technical/**/*",
+      "__AI_CONTEXT__/development/**/*",
+      "__AI_CONTEXT__/api/**/*",
+      "__AI_CONTEXT__/product/**/*",
+      "__AI_CONTEXT__/integration/**/*"
+    ],
+    "excludePaths": [
+      "__AI_CONTEXT__/.obsidian/**",
+      "__AI_CONTEXT__/**/.git/**",
+      "__AI_CONTEXT__/**/node_modules/**"
+    ],
+    "priority": "high",
+    "autoLoad": true,
+    "autoAttach": true,
+    "watchFiles": true,
+    "maxFileSize": 10485760,
+    "priorityFiles": [
+      "__AI_CONTEXT__/AI_REQUIREMENTS.md"
+    ]
+  },
+  "ai": {
+    "contextAwareness": true,
+    "contextPriority": "high",
+    "referenceContext": true,
+    "autoLoadContext": true,
+    "fileAccess": {
+      "allowEdit": true,
+      "autoAttach": true,
+      "watchChanges": true
+    },
+    "documentation": {
+      "autoUpdate": true,
+      "paths": [
+        "__AI_CONTEXT__/technical",
+        "__AI_CONTEXT__/development",
+        "__AI_CONTEXT__/api",
+        "__AI_CONTEXT__/product",
+        "__AI_CONTEXT__/integration"
+      ],
+      "requirements": "__AI_CONTEXT__/AI_REQUIREMENTS.md"
+    }
+  },
+  "editor": {
+    "autoSave": true,
+    "formatOnSave": true
+  },
+  "workspace": {
+    "documentationPath": "__AI_CONTEXT__",
+    "watchPatterns": [
+      "__AI_CONTEXT__/**/*.md",
+      "__AI_CONTEXT__/**/*.json"
+    ],
+    "priorityFiles": [
+      "__AI_CONTEXT__/AI_REQUIREMENTS.md"
+    ]
+  }
+} 
