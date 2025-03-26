@@ -16,13 +16,24 @@ public class OddsRepository : IOddsRepository
 
     public async Task<Odds?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return await _context.Odds.FindAsync([id], cancellationToken);
+        return await _context.Odds
+            .Include(o => o.Market)
+            .FirstOrDefaultAsync(o => o.Id == id, cancellationToken);
     }
 
     public async Task<IEnumerable<Odds>> GetByEventIdAsync(string eventId, CancellationToken cancellationToken = default)
     {
         return await _context.Odds
-            .Where(o => o.EventId == eventId)
+            .Include(o => o.Market)
+            .Where(o => o.Market.EventId == eventId)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<IEnumerable<Odds>> GetActiveAsync(CancellationToken cancellationToken = default)
+    {
+        return await _context.Odds
+            .Include(o => o.Market)
+            .Where(o => o.IsActive && o.Market.IsActive)
             .ToListAsync(cancellationToken);
     }
 
@@ -42,18 +53,11 @@ public class OddsRepository : IOddsRepository
 
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var odds = await GetByIdAsync(id, cancellationToken);
+        var odds = await _context.Odds.FindAsync(new object[] { id }, cancellationToken);
         if (odds != null)
         {
             _context.Odds.Remove(odds);
             await _context.SaveChangesAsync(cancellationToken);
         }
-    }
-
-    public async Task<IEnumerable<Odds>> GetActiveAsync(CancellationToken cancellationToken = default)
-    {
-        return await _context.Odds
-            .Where(o => o.IsActive)
-            .ToListAsync(cancellationToken);
     }
 } 

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using OddsAPI.Core.Entities;
 using OddsAPI.Core.Interfaces;
+using OddsAPI.Core.Models;
 using Prometheus;
 
 namespace OddsAPI.Api.Controllers;
@@ -21,18 +21,18 @@ public class OddsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<Odds>> CreateOdds([FromBody] Odds odds, CancellationToken cancellationToken)
+    public async Task<ActionResult<OddsDto>> CreateOdds([FromBody] CreateOddsDto createOddsDto)
     {
         OddsRequests.Inc();
-        var created = await _oddsService.CreateOddsAsync(odds, cancellationToken);
+        var created = await _oddsService.CreateAsync(createOddsDto);
         return CreatedAtAction(nameof(GetOdds), new { id = created.Id }, created);
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<Odds>> GetOdds(Guid id, CancellationToken cancellationToken)
+    public async Task<ActionResult<OddsDto>> GetOdds(Guid id)
     {
         OddsRequests.Inc();
-        var odds = await _oddsService.GetOddsByIdAsync(id, cancellationToken);
+        var odds = await _oddsService.GetByIdAsync(id);
         if (odds == null)
         {
             return NotFound();
@@ -41,40 +41,43 @@ public class OddsController : ControllerBase
         return Ok(odds);
     }
 
-    [HttpGet("event/{eventId}")]
-    public async Task<ActionResult<IEnumerable<Odds>>> GetOddsByEvent(string eventId, CancellationToken cancellationToken)
+    [HttpGet("market/{marketId}")]
+    public async Task<ActionResult<IEnumerable<OddsDto>>> GetOddsByMarket(Guid marketId)
     {
         OddsRequests.Inc();
-        var odds = await _oddsService.GetOddsByEventIdAsync(eventId, cancellationToken);
+        var odds = await _oddsService.GetByMarketIdAsync(marketId);
         return Ok(odds);
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult<Odds>> UpdateOdds(Guid id, [FromBody] Odds odds, CancellationToken cancellationToken)
+    public async Task<ActionResult<OddsDto>> UpdateOdds(Guid id, [FromBody] UpdateOddsDto updateOddsDto)
     {
         OddsRequests.Inc();
-        if (id != odds.Id)
+        var updated = await _oddsService.UpdateAsync(id, updateOddsDto);
+        if (updated == null)
         {
-            return BadRequest();
+            return NotFound();
         }
-
-        var updated = await _oddsService.UpdateOddsAsync(odds, cancellationToken);
         return Ok(updated);
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteOdds(Guid id, CancellationToken cancellationToken)
+    public async Task<IActionResult> DeleteOdds(Guid id)
     {
         OddsRequests.Inc();
-        await _oddsService.DeleteOddsAsync(id, cancellationToken);
+        var result = await _oddsService.DeleteAsync(id);
+        if (!result)
+        {
+            return NotFound();
+        }
         return NoContent();
     }
 
     [HttpGet("active")]
-    public async Task<ActionResult<IEnumerable<Odds>>> GetActiveOdds(CancellationToken cancellationToken)
+    public async Task<ActionResult<IEnumerable<OddsDto>>> GetActiveOdds()
     {
         OddsRequests.Inc();
-        var odds = await _oddsService.GetActiveOddsAsync(cancellationToken);
+        var odds = await _oddsService.GetActiveAsync();
         return Ok(odds);
     }
 
@@ -82,15 +85,13 @@ public class OddsController : ControllerBase
     public async Task<IActionResult> ScheduleOddsUpdate(
         [FromQuery] string eventId,
         [FromQuery] string marketId,
-        [FromQuery] int intervalSeconds,
-        CancellationToken cancellationToken)
+        [FromQuery] int intervalSeconds)
     {
         OddsRequests.Inc();
         await _oddsService.ScheduleOddsUpdateAsync(
             eventId,
             marketId,
-            TimeSpan.FromSeconds(intervalSeconds),
-            cancellationToken);
+            TimeSpan.FromSeconds(intervalSeconds));
 
         return Ok();
     }

@@ -1,14 +1,17 @@
-using OddsAPI.Core.Entities;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using OddsAPI.Core.Models;
 
 namespace OddsAPI.Core.Interfaces;
 
 public interface IOddsService
 {
-    Task<Odds> CreateOddsAsync(Odds odds, CancellationToken cancellationToken = default);
-    Task<Odds?> GetOddsByIdAsync(Guid id, CancellationToken cancellationToken = default);
-    Task<IEnumerable<Odds>> GetOddsByEventIdAsync(string eventId, CancellationToken cancellationToken = default);
-    Task<Odds> UpdateOddsAsync(Odds odds, CancellationToken cancellationToken = default);
-    Task DeleteOddsAsync(Guid id, CancellationToken cancellationToken = default);
-    Task<IEnumerable<Odds>> GetActiveOddsAsync(CancellationToken cancellationToken = default);
-    Task ScheduleOddsUpdateAsync(string eventId, string marketId, TimeSpan interval, CancellationToken cancellationToken = default);
+    Task<OddsDto> CreateAsync(CreateOddsDto createOddsDto);
+    Task<OddsDto> GetByIdAsync(Guid id);
+    Task<IEnumerable<OddsDto>> GetByMarketIdAsync(Guid marketId);
+    Task<OddsDto> UpdateAsync(Guid id, UpdateOddsDto updateOddsDto);
+    Task<bool> DeleteAsync(Guid id);
+    Task<IEnumerable<OddsDto>> GetActiveAsync();
+    Task ScheduleOddsUpdateAsync(string eventId, string marketId, TimeSpan interval);
 } 
