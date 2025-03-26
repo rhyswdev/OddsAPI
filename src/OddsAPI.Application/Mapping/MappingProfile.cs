@@ -1,7 +1,6 @@
 using AutoMapper;
 using OddsAPI.Core.Entities;
 using OddsAPI.Core.Models;
-using OddsAPI.Application.DTOs;
 
 namespace OddsAPI.Application.Mapping;
 
